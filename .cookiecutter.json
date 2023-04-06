@@ -1,0 +1,14 @@
+{
+  "_output_dir": "/Users/mbieger/Documents/repos",
+  "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
+  "author": "M. F. Bieger",
+  "copyright_year": "2022",
+  "development_status": "Development Status :: 1 - Planning",
+  "email": "mb987@exeter.ac.uk",
+  "friendly_name": "ATMOpy",
+  "github_user": "mfbieger",
+  "license": "GPL-3.0",
+  "package_name": "atmopy",
+  "project_name": "atmopy",
+  "version": "0.0.0"
+}

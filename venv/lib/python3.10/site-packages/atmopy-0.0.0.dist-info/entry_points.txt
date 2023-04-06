@@ -1,0 +1,6 @@
+[console_scripts]
+atmopy=atmopy.__main__:main
+
+[taurex.plugins]
+atmo=atmopy.taurex
+

@@ -1,0 +1,43 @@
+[Global]
+xsec_path = '/Users/mbieger/Documents/repos/Exo_Transmit/Opac'
+atmo_path = /Users/mbieger/atmo/tutorial/chem_eq
+
+[Chemistry]
+chemistry_type = atmo
+metallicity = 0.5
+cond_h2o = nope
+
+
+[Temperature]
+profile_type = NPoint
+T_surface = 3200
+P_surface = 1e5
+T_top = 3500
+P_top = 1e1
+temperature_points = 2800,
+pressure_points = 1e3,
+
+
+[Pressure]
+profile_type = Simple
+atm_min_pressure = 1e-5
+atm_max_pressure = 1e7
+nlayers = 100
+
+[Planet]
+#brown
+planet_type = Simple
+planet_mass = 0.85
+planet_radius = 1.53
+
+[Star]
+star_type = blackbody
+radius = 1.51
+temperature = 6600
+
+[Model]
+model_type = emission
+
+    [[Absorption]]
+
+    [[Rayleigh]]

@@ -1,0 +1,49 @@
+! Namelist file for the tutorial chem_eq: calculating chemical equilibrium abundances with a read in PT profile
+
+&UNITS
+/
+
+&PARAM
+Debug  = 0
+fin = 'pt_example.ncdf'
+/
+
+&EOS
+gamma = 0.
+/
+
+&GRID
+ndepth = 50
+
+corr_k = t
+/
+
+&CHEMISTRY
+chem  = 'eq'
+fAin = 'chem_dummy.ncdf'
+fAeqout = 'tutorial_chem_eq.ncdf'
+mdh = 0.
+print_chem = t
+/
+
+&CHEM_NEQ
+/
+
+&CHEM_RELAX
+/
+
+&RADTRANS
+/
+
+
+&OPACITY
+nkap =12
+/
+
+&SOLVER
+solve_hydro  = f
+solve_energy = f
+/
+
+&CONVECTION
+/
