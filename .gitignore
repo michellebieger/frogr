@@ -3,15 +3,20 @@
 __pycache__
 .nox
 .pytest_cache
+venv
 .venv
 .vscode
+src/atmopy/__pycache__
+
 
 # Development tools 
 .darglint
 .flake8
 .noxfile.py
+dist
 
 # Development files
+tests
 input_examples/.ipynb_checkpoints
 input_examples/ahmed.ipynb
 input_examples/Untitled.ipynb
