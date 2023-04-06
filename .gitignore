@@ -1,0 +1,17 @@
+# Python and environment specific 
+.ipynb_checkpoints
+__pycache__
+.nox
+.pytest_cache
+.venv
+.vscode
+
+# Development tools 
+.darglint
+.flake8
+.noxfile.py
+
+# Development files
+input_examples/.ipynb_checkpoints
+input_examples/ahmed.ipynb
+input_examples/Untitled.ipynb
