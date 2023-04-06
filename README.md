@@ -63,7 +63,7 @@ $ pip install .
 You can check the installation by importing frogr into Python:
 
 ```console
-$ python -c "import frogr; print(frogr.__version__)"
+$ python -c "import atmopy"
 ```
 
 If there are no errors, you have been successful!
