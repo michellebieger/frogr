@@ -65,4 +65,4 @@ class ATMOChemistry(AutoChemistry):
     @classmethod
     def input_keywords(cls):
         """Taurex detection keywords."""
-        return ["ATMO", "atmo", "frogr"]
+        return ["atmopy", "ATMO", "atmo", "frogr"]
