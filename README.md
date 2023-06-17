@@ -66,6 +66,12 @@ You can check the installation by importing frogr into Python:
 $ python -c "import atmopy"
 ```
 
+To check that TauREx 3.1 has correctly registered your plugin: 
+
+```console
+$ taurex --plugins
+```
+
 If there are no errors, you have been successful!
 
 ## Usage
