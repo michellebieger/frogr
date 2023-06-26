@@ -4,28 +4,96 @@ from taurex.cache import GlobalCache
 from taurex.chemistry import AutoChemistry
 from taurex.core import fitparam
 
-from atmopy.io import baseline_molecules
+from atmopy.io import baseline_molecules, baseline_ratio
+from atmopy.util import compute_element_factor
 from atmopy.runner import ATMORunner
+import typing as t
+from atmopy.util import compute_element_factor
 
 
 class ATMOChemistry(AutoChemistry):
     """Taurex Atmospheric Chemistry ATMO class."""
 
-    def __init__(self, metallicity=0.0, cond_h2o=False):
+    def __init__(
+        self,
+        metallicity=1.0,
+        ratio_elements=None,
+        ratio_factors=None,
+        baseline_element="O",
+        cond_h2o=False,
+    ):
         """Initiialize."""
         super().__init__("ATMO")
         self.atmorunner = ATMORunner(
             atmo_path=GlobalCache()["atmo_path"],
             atmo_executable=GlobalCache()["atmo_executable"],
         )
-        self.atmorunner.chemistry.metallicity = metallicity
+
+        ratio_elements = ratio_elements or []
+        ratio_factors = ratio_factors or []
+        self.baseline_element = baseline_element
+
+        self.current_ratios = baseline_ratio(self.baseline_element)
+
+        if len(ratio_factors) != len(ratio_elements):
+            raise ValueError("Ratio elements and factors must be same size.")
+
+        element_factors = list(zip(ratio_elements, ratio_factors))
+
+        self.atmorunner.chemistry.metallicity = 1.0
+
+        self._metallicity = metallicity
+
+        element_factors = element_factors or []
+
+        for elem, val in element_factors:
+            self.current_ratios[elem] = val
+
         self.atmorunner.chemistry.condensation_h2o = cond_h2o
 
         self.mix = None
 
-        self.element_ratios = []
+        self.recompute_elements()
 
         self.determine_active_inactive()
+        self.build_ratio_params()
+
+    def recompute_elements(self):
+        """Remcompute metallicity and ratios"""
+        element_factors = compute_element_factor(
+            self._metallicity, self.current_ratios.items()
+        )
+        self.atmorunner.chemistry.element_factor = element_factors
+
+    def build_ratio_params(self):
+        from taurex.util.util import molecule_texlabel
+
+        for element in self.current_ratios.keys():
+            if element in ("H", "He", self.baseline_element):
+                continue
+            mol_name = f"{element}_{self.baseline_element}_ratio"
+            param_name = mol_name
+            param_tex = "{}/{}".format(
+                molecule_texlabel(element), molecule_texlabel(self.baseline_element)
+            )
+
+            def read_mol(self, element=element):
+                return self.current_ratios[element]
+
+            def write_mol(self, value, element=element):
+                self.current_ratios[element] = value
+
+            read_mol.__doc__ = f"{element}/{self.baseline_element} ratio"
+
+            fget = read_mol
+            fset = write_mol
+
+            bounds = [1.0e-12, 0.1]
+
+            default_fit = False
+            self.add_fittable_param(
+                param_name, param_tex, fget, fset, "linear", default_fit, bounds
+            )
 
     @property
     def gases(self):
@@ -40,6 +108,7 @@ class ATMOChemistry(AutoChemistry):
         altitude_profile=None,
     ):
         """Build chemistry."""
+        self.recompute_elements()
         temperature = temperature_profile << u.K
         pressure = pressure_profile << u.Pa
         result = self.atmorunner.run(temperature, pressure)
@@ -66,3 +135,7 @@ class ATMOChemistry(AutoChemistry):
     def input_keywords(cls):
         """Taurex detection keywords."""
         return ["atmopy", "ATMO", "atmo", "frogr"]
+
+
+class ATMONeqChemistry(ATMOChemistry):
+    pass

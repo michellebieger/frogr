@@ -10,6 +10,8 @@ import numpy.typing as npt
 import pkg_resources
 from astropy import units as u
 
+import os
+
 
 def to_fortran_bool(value: bool) -> str:
     """Convert Python bool to Fortran bool."""
@@ -37,6 +39,8 @@ def create_namelist(
 
     params = params or {}
 
+    elem_xfactor = params.pop("elem_xfactor", None)
+
     for k, v in params.items():
         value_text = None
         if isinstance(v, str):
@@ -46,6 +50,9 @@ def create_namelist(
         else:
             value_text = f"{v}"
         namelist_params.append(f"{k} = {value_text}")
+
+    if elem_xfactor:
+        namelist_params.append(elem_xfactor)
 
     return "\n".join(base + namelist_params + ["/"])
 
@@ -61,6 +68,7 @@ def create_element_factors(
         [
             f"ele_xfactor({elements.index(elem)+1}) = {value}"
             for elem, value in element_factors
+            if elem not in ("H", "He")
         ]
     )
 
@@ -78,6 +86,7 @@ class ChemistryInputSection:
 
     Takes in arguments for chem namelist.
     Uses create_namelist to convert from user input to Fortran.
+    Here is where you insert the variables that you want to take from namelist into retrieval.
     """
 
     chem: t.Optional[ChemistryType] = ChemistryType.EQUIL
@@ -171,9 +180,11 @@ class ChemistryInputSection:
 
         my_output = {mappings.get(k, k): v for k, v in my_output.items()}
         # check atmo inputs against the namelist params from atmo
-        if self.element_factor:
-            my_output["elem_xfactor"] = create_element_factors(self.element_factor)
 
+        if self.element_factor:
+            factors = my_output.pop("element_factor")
+            my_output["elem_xfactor"] = create_element_factors(factors)
+        print(my_output)
         return create_namelist("chemistry", my_output)
 
 
@@ -319,6 +330,46 @@ def baseline_elements():
     ]
 
 
+def baseline_element_values():
+    """Return baseline element values"""
+    return [
+        1.0000e00,
+        9.5500e-02,
+        3.1623e-04,
+        7.2444e-05,
+        5.7544e-04,
+        1.7378e-06,
+        1.2882e-07,
+        3.2359e-05,
+        2.5119e-06,
+        8.9125e-08,
+        8.5114e-09,
+        1.4454e-05,
+        3.1623e-07,
+        3.9811e-05,
+        2.8184e-06,
+        2.1878e-06,
+        3.3113e-05,
+        4.3652e-07,
+        1.8197e-09,
+        1.2023e-11,
+        3.3113e-10,
+        3.6308e-08,
+    ]
+
+
+def baseline_element_w_factors():
+    return dict(zip(baseline_elements(), baseline_element_values()))
+
+
+def baseline_ratio(element: str = "O"):
+    element_factors = baseline_element_w_factors()
+
+    ratio_element = element_factors[element]
+
+    return {k: v / ratio_element for k, v in element_factors.items()}
+
+
 def copy_pkg_file(filename: str, output_directory: str) -> None:
     """Copy a file from the package into a directory."""
     import os
@@ -333,3 +384,64 @@ def copy_pkg_file(filename: str, output_directory: str) -> None:
     shutil.copy(file_path, os.path.join(output_directory, filename))
     shutil.copymode(file_path, os.path.join(output_directory, filename))
     return None
+
+
+@dataclass
+class NeqChemistryInputSection:
+    """Disequlibrium chemistry"""
+
+    nfile: int = 13
+    """number of reaction files 	13 	"""
+    nmol_neq: int = 107
+    """number of molecules included in the reaction network 	107 	"""
+    dir_neq: str = None
+    """directory of the chemical network files 	'../../chem/venot2012/' 	"""
+    tfreeze: float = 10
+    """minimum temperature at which to calculate the reaction constants 	10. 	K"""
+    pfreeze: float = 1e6
+    """maximum pressure at which to calculate the reaction constants 	1e6 	bars"""
+    photochem: bool = False
+    """include photo chemistry (chem='neq' only) 	.false. 	"""
+    fhnu_uv: str = None
+    """filename of the UV irradiation file 	'None' 	"""
+    nuv: int = 900
+    """number of wavelength points in the UV spectrum 	900 	"""
+    mod_fuv: int = 50
+    """frequency (in number of iterations) with which to recalculate the UV flux 	50 	"""
+    tmax: float = 1e12
+    """maximum integration time of the chemical kinetics 	1e12 	s"""
+    Nmin: float = 1e-100
+    """minimum number density allowed for the chemical species 	1e-100 	1/cm3"""
+    dtmin: float = 1e-10
+    """minimum timestep 	1e-10 	s"""
+    dtmax: float = 1e10
+    """maximum timestep 	1e10 	s"""
+    mod_rate: int = 1
+    """frequency with which to recalculate rate constants 	1 	"""
+    mod_jac: int = 10_000
+    """frequency with which to recalculate the jacobian matrix 	10000 	"""
+    mod_pt: int = 100
+    """frequency with which to reconverge the PT profile (solve_hydro=.true. and/or solve_energy=.true. only) 	100 	"""
+    dt_lim: float = 1e7
+    """limit on timestep (rate_limiter=.true. only) 	1e7 	s"""
+    nn_lim: float = 1e-30
+    """limit on density (rate_limiter=.true. only) 	1e-30 	1/cm3"""
+    tt_lim: float = 100
+    """limit on temperature (rate_limiter=.true. only) 	100. 	K"""
+    depth_lim: float = 0.9
+    """fraction of profile over which to apply rate limiter (rate_limiter=.true. only) 	0.9 	"""
+    rate_limiter: bool = False
+    """apply a rate limiter 	.false. 	"""
+    check_lbound: bool = False
+    """check if lower bound is in chemical equilibrium (NOT GOOD-SHOULD BE REMOVED) 	.false. 	"""
+
+    def build_section(self, atmo_path: str = None) -> str:
+        """Build namelist for disequlibrium"""
+        atmo_path = atmo_path or os.environ.get("ATMO_PATH", None)
+
+        if self.dir_neq is None and atmo_path is not None:
+            self.dir_neq = os.path.join(atmo_path, "..", "chem", "venot2012")
+
+        val = asdict(self)
+
+        return create_namelist("chem_neq", val)

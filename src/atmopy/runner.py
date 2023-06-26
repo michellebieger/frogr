@@ -123,6 +123,8 @@ class ATMORunner:
         expected_output_path = os.path.join(run_directory, output_filename)
         if not os.path.isfile(expected_output_path):
             #
+            print(stdout)
+            print(stderr)
             raise ATMOFailureError("ATMO did not finish or run properly")
 
         with netcdf_file(expected_output_path, "r") as f:
