@@ -21,6 +21,7 @@ class ATMOChemistry(AutoChemistry):
         ratio_factors=None,
         baseline_element="O",
         cond_h2o=False,
+        cond_nh3=False,
     ):
         """Initiialize."""
         super().__init__("ATMO")
@@ -48,13 +49,14 @@ class ATMOChemistry(AutoChemistry):
 
         for elem, val in element_factors:
             self.current_ratios[elem] = val
-
+        # set element ratio factors to give to TR
         self.atmorunner.chemistry.condensation_h2o = cond_h2o
-
+        self.atmorunner.chemistry.condensation_nh3 = cond_nh3
+        # set condensation factors to give to TR
         self.mix = None
 
         self.recompute_elements()
-
+        # compute element ratios again post setting a metallicity
         self.determine_active_inactive()
         self.build_ratio_params()
 
@@ -66,6 +68,7 @@ class ATMOChemistry(AutoChemistry):
         self.atmorunner.chemistry.element_factor = element_factors
 
     def build_ratio_params(self):
+        """Create fitting parameters for the elements"""
         from taurex.util.util import molecule_texlabel
 
         for element in self.current_ratios.keys():
@@ -76,20 +79,21 @@ class ATMOChemistry(AutoChemistry):
             param_tex = "{}/{}".format(
                 molecule_texlabel(element), molecule_texlabel(self.baseline_element)
             )
-
+            # for-loop to create fitting parameter for each element ratio that you have selected
             def read_mol(self, element=element):
                 return self.current_ratios[element]
 
             def write_mol(self, value, element=element):
                 self.current_ratios[element] = value
 
+            # functions to read, write so that they're passed back to TR
             read_mol.__doc__ = f"{element}/{self.baseline_element} ratio"
 
             fget = read_mol
             fset = write_mol
 
             bounds = [1.0e-12, 0.1]
-
+            # create default bounds
             default_fit = False
             self.add_fittable_param(
                 param_name, param_tex, fget, fset, "linear", default_fit, bounds

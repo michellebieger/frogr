@@ -2,7 +2,8 @@
 
 import typing as t
 
-
+# function to compute the element factors as a ratio between selected element vs baseline element
+# because ATMO only has it as either metallicity OR ratio between selected element vs H
 def compute_element_factor(
     metallicity: float, ratios: t.List[t.Tuple[str, float]] = None, ratio_element="O"
 ) -> t.List[t.Tuple[str, float]]:
