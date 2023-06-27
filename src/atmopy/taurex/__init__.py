@@ -128,12 +128,12 @@ class ATMOChemistry(AutoChemistry):
     @fitparam(param_name="metallicity", param_latex=r"$Z_{o}$")
     def metallicity(self):
         """Metallicity of atmosphere in solar metallicity units."""
-        return self.atmorunner.chemistry.metallicity
+        return self._metallicity
 
     @metallicity.setter
     def metallicity(self, value):
         """Setter."""
-        self.atmorunner.chemistry.metallicity = value
+        self._metallicity = value
 
     @classmethod
     def input_keywords(cls):
