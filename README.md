@@ -60,13 +60,19 @@ Install by then typing in:
 $ pip install .
 ```
 
+If you are unable to install, a common error for HPC systems can be the Poetry log install requirements, which dictate a high-level version of Python. Try creating a new conda environment and then try pip installing once more:
+
+```console
+$ conda create -n [insertpreferredenvname] python=3.8
+```
+
 You can check the installation by importing frogr into Python:
 
 ```console
 $ python -c "import atmopy"
 ```
 
-To check that TauREx 3.1 has correctly registered your plugin: 
+To check that TauREx 3.1 has correctly registered your plugin:
 
 ```console
 $ taurex --plugins

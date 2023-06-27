@@ -40,13 +40,12 @@ class ATMOChemistry(AutoChemistry):
         self.current_ratios = baseline_ratio(self.baseline_element)
 
         all_elements = baseline_elements()
-
+        # create all elements out of the baseline elements in atmo
         selected_factor = np.ones(len(all_elements))
-
         if selected_elements is None:
             selected_elements = all_elements
         selected_elements = set(selected_elements) | {"H", "He"}
-
+        # even if you don't select any elements, there's always going to be H and He
         remove_elements = set(all_elements) - selected_elements
 
         zero_indices = np.array([all_elements.index(x) for x in remove_elements])
@@ -55,6 +54,8 @@ class ATMOChemistry(AutoChemistry):
             selected_factor[zero_indices] = 1e-10
 
         self.select_scale = selected_factor
+        # get the elements to scale back to very very small (practically zero, 1e-10) so that effectively out of the retrieval
+        # if you get a Gibbs minimisation error, then you need to either go back and increase this number, e.g. 1e-5 or just go ahead and put element back in there
 
         if len(ratio_factors) != len(ratio_elements):
             raise ValueError("Ratio elements and factors must be same size.")
@@ -62,7 +63,7 @@ class ATMOChemistry(AutoChemistry):
         element_factors = list(zip(ratio_elements, ratio_factors))
 
         self.atmorunner.chemistry.metallicity = 1.0
-
+        # set metallicity
         self._metallicity = metallicity
 
         element_factors = element_factors or []
@@ -89,7 +90,7 @@ class ATMOChemistry(AutoChemistry):
         element_factors = [
             (k, v * scale) for scale, (k, v) in zip(self.select_scale, element_factors)
         ]
-
+        # resetting the elements in the list to be zero (unless element ratio altered)
         self.atmorunner.chemistry.element_factor = element_factors
 
     def build_ratio_params(self):
