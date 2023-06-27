@@ -4,11 +4,13 @@ from taurex.cache import GlobalCache
 from taurex.chemistry import AutoChemistry
 from taurex.core import fitparam
 
-from atmopy.io import baseline_molecules, baseline_ratio
+from atmopy.io import baseline_molecules, baseline_ratio, baseline_elements
 from atmopy.util import compute_element_factor
 from atmopy.runner import ATMORunner
 import typing as t
 from atmopy.util import compute_element_factor
+
+import numpy as np
 
 
 class ATMOChemistry(AutoChemistry):
@@ -22,6 +24,7 @@ class ATMOChemistry(AutoChemistry):
         baseline_element="O",
         cond_h2o=False,
         cond_nh3=False,
+        selected_elements=None,
     ):
         """Initiialize."""
         super().__init__("ATMO")
@@ -35,6 +38,23 @@ class ATMOChemistry(AutoChemistry):
         self.baseline_element = baseline_element
 
         self.current_ratios = baseline_ratio(self.baseline_element)
+
+        all_elements = baseline_elements()
+
+        selected_factor = np.ones(len(all_elements))
+
+        if selected_elements is None:
+            selected_elements = all_elements
+        selected_elements = set(selected_elements) | {"H", "He"}
+
+        remove_elements = set(all_elements) - selected_elements
+
+        zero_indices = np.array([all_elements.index(x) for x in remove_elements])
+
+        if zero_indices.shape[0] > 0:
+            selected_factor[zero_indices] = 1e-10
+
+        self.select_scale = selected_factor
 
         if len(ratio_factors) != len(ratio_elements):
             raise ValueError("Ratio elements and factors must be same size.")
@@ -65,6 +85,11 @@ class ATMOChemistry(AutoChemistry):
         element_factors = compute_element_factor(
             self._metallicity, self.current_ratios.items()
         )
+
+        element_factors = [
+            (k, v * scale) for scale, (k, v) in zip(self.select_scale, element_factors)
+        ]
+
         self.atmorunner.chemistry.element_factor = element_factors
 
     def build_ratio_params(self):
