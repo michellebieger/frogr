@@ -46,7 +46,7 @@ def run_atmo(
     working_directory = working_directory or atmo_path
 
     total_atmo_path = os.path.join(atmo_path, atmo_executable)
-    print(total_atmo_path)
+    # print(total_atmo_path)
     if copy_atmo:
         new_path = os.path.join(working_directory, atmo_executable)
         shutil.copyfile(total_atmo_path, new_path)

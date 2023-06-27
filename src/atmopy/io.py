@@ -184,7 +184,7 @@ class ChemistryInputSection:
         if self.element_factor:
             factors = my_output.pop("element_factor")
             my_output["elem_xfactor"] = create_element_factors(factors)
-        print(my_output)
+        # print(my_output)
         return create_namelist("chemistry", my_output)
 
 
