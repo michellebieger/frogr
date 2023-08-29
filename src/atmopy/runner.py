@@ -81,8 +81,10 @@ class ATMORunner:
     ):
         """Initialize."""
         from .io import ChemistryInputSection
+        from .io import NeqChemistryInputSection
 
         self.chemistry = ChemistryInputSection()
+        self.diseqchemistry = NeqChemistryInputSection()
         self.atmo_path = atmo_path
         self.atmo_executable = atmo_executable
 
@@ -108,9 +110,14 @@ class ATMORunner:
         chem_section = self.chemistry.build_section(
             run_directory, output_name=output_filename
         )
-
+        diseq_section = self.diseqchemistry.build_section(
+            run_directory, output_name=output_filename
+        )
+        # create the equilibrium and diseq chem sections and pass as empty arguments to generate the atmo input file
         full_input_file, input_file = generate_input_file(
-            run_directory, nlevels=nlevels, sections=[param_section, chem_section]
+            run_directory,
+            nlevels=nlevels,
+            sections=[param_section, chem_section, diseq_section],
         )
 
         stdout, stderr = run_atmo(

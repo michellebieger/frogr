@@ -25,6 +25,8 @@ class ATMOChemistry(AutoChemistry):
         cond_h2o=False,
         cond_nh3=False,
         selected_elements=None,
+        Gibbs_step_size=2,
+        rainout=False,
     ):
         """Initiialize."""
         super().__init__("ATMO")
@@ -74,6 +76,9 @@ class ATMOChemistry(AutoChemistry):
         self.atmorunner.chemistry.condensation_h2o = cond_h2o
         self.atmorunner.chemistry.condensation_nh3 = cond_nh3
         # set condensation factors to give to TR
+        self.atmorunner.chemistry.rainout = rainout
+        # set elements to be included in rainout
+        self.atmorunner.chemistry.gibbs_step_size = Gibbs_step_size
         self.mix = None
 
         self.recompute_elements()
@@ -168,4 +173,20 @@ class ATMOChemistry(AutoChemistry):
 
 
 class ATMONeqChemistry(ATMOChemistry):
+    def __init__(
+        self,
+        # photochem=False,
+    ):
+
+        """Initiialize."""
+        super().__init__()
+        from ..io import ChemistryType
+
+        self.atmorunner.chemistry.chem = ChemistryType.NONEQUIL
+
+    @classmethod
+    def input_keywords(cls):
+        """Taurex detection keywords."""
+        return ["diseqatmopy", "frogr_diseq"]
+
     pass

@@ -175,6 +175,7 @@ class ChemistryInputSection:
             "condensation_nh3": "cond_NH3",
             "condensation_h2o": "cond_H2O",
             "gibbs_step_size": "chem_conv",
+            "rainout": "rainout",
         }
         # dictionary from what we called it to what the namelist param is in atmo
 
