@@ -4,11 +4,11 @@ from taurex.cache import GlobalCache
 from taurex.chemistry import AutoChemistry
 from taurex.core import fitparam
 
-from atmopy.io import baseline_molecules, baseline_ratio, baseline_elements
-from atmopy.util import compute_element_factor
-from atmopy.runner import ATMORunner
+from frogr.io import baseline_molecules, baseline_ratio, baseline_elements
+from frogr.util import compute_element_factor
+from frogr.runner import ATMORunner
 import typing as t
-from atmopy.util import compute_element_factor
+from frogr.util import compute_element_factor
 
 import numpy as np
 

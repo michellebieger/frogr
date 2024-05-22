@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "atmopy"
+name = "frogr"
 version = "0.0.0"
 description = "ATMOpy"
 authors = ["M. F. Bieger <mb987@exeter.ac.uk>"]
@@ -8,9 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/mfbieger/atmopy"
 repository = "https://github.com/mfbieger/atmopy"
 documentation = "https://atmopy.readthedocs.io"
-classifiers = [
-    "Development Status :: 1 - Planning",
-]
+classifiers = ["Development Status :: 1 - Planning"]
 
 [tool.poetry.urls]
 Changelog = "https://github.com/mfbieger/atmopy/releases"
@@ -27,7 +25,7 @@ twine = "^4.0.2"
 [tool.poetry.dev-dependencies]
 Pygments = ">=2.10.0"
 black = ">=21.10b0"
-coverage = {extras = ["toml"], version = ">=6.2"}
+coverage = { extras = ["toml"], version = ">=6.2" }
 darglint = ">=1.8.1"
 flake8 = ">=4.0.1"
 flake8-bandit = ">=2.1.2"
@@ -47,14 +45,14 @@ sphinx = ">=4.3.2"
 sphinx-autobuild = ">=2021.3.14"
 sphinx-click = ">=3.0.2"
 typeguard = ">=2.13.3"
-xdoctest = {extras = ["colors"], version = ">=0.15.10"}
-myst-parser = {version = ">=0.16.1"}
+xdoctest = { extras = ["colors"], version = ">=0.15.10" }
+myst-parser = { version = ">=0.16.1" }
 
 [tool.poetry.scripts]
 atmopy = "atmopy.__main__:main"
 
 [tool.poetry.group.dev.dependencies]
-black = {version = "^22.10.0", allow-prereleases = true}
+black = { version = "^22.10.0", allow-prereleases = true }
 ipython = "^8.6.0"
 jupyterlab = "^3.5.0"
 
@@ -87,7 +85,6 @@ show_error_context = true
 
 [tool.poetry.plugins."taurex.plugins"]
 atmo = "atmopy.taurex"
-
 
 
 [build-system]
