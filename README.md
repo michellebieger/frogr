@@ -32,15 +32,13 @@
 
 ## Installation
 
-<!-- You can install _frogr_ via [pip] from [PyPI]:
+You can install _frogr_ via [pip] from [PyPI]:
 
 ```console
 $ pip install frogr
 ```
 
-Alternatively, clone this Github and install via terminal with. This is done by: -->
-
-You can install _frogr_ by cloning this Github and installing via the terminal. This is done by:
+Alternatively, clone this Github and install via terminal with. This is done by:
 
 Cloning the directory using:
 
@@ -48,7 +46,7 @@ Cloning the directory using:
 $ git clone https://github.com/michellebieger/frogr.git
 ```
 
-Move into frogr's folder:
+Move into _frogr_'s folder:
 
 ```console
 $ cd frogr
@@ -60,16 +58,16 @@ Install by then typing in:
 $ pip install .
 ```
 
-If you are unable to install, a common error for HPC systems can be the Poetry log install requirements, which dictate a high-level version of Python. Try creating a new conda environment and then try pip installing once more:
+If you are unable to install, a common error for HPC systems can be the Poetry log install requirements, which dictate a high-level version of Python. Try creating a new `conda` environment and then try `pip install`'ing once more:
 
 ```console
 $ conda create -n [insertpreferredenvname] python=3.8
 ```
 
-You can check the installation by importing frogr into Python:
+You can check the installation by importing _frogr_ into Python:
 
 ```console
-$ python -c "import atmopy"
+$ python -c "import frogr"
 ```
 
 To check that TauREx 3.1 has correctly registered your plugin:
