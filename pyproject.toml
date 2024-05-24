@@ -49,7 +49,7 @@ xdoctest = { extras = ["colors"], version = ">=0.15.10" }
 myst-parser = { version = ">=0.16.1" }
 
 [tool.poetry.scripts]
-atmopy = "atmopy.__main__:main"
+frogr = "frogr.__main__:main"
 
 [tool.poetry.group.dev.dependencies]
 black = { version = "^22.10.0", allow-prereleases = true }
@@ -84,7 +84,7 @@ show_error_context = true
 [tool.poetry.plugins] # Optional super table
 
 [tool.poetry.plugins."taurex.plugins"]
-atmo = "atmopy.taurex"
+frogr = "atmopy.taurex"
 
 
 [build-system]
