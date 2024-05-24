@@ -5,13 +5,13 @@ description = "ATMOpy"
 authors = ["M. F. Bieger <mb987@exeter.ac.uk>"]
 license = "GPL-3.0"
 readme = "README.md"
-homepage = "https://github.com/mfbieger/atmopy"
-repository = "https://github.com/mfbieger/atmopy"
+homepage = "https://github.com/michellebieger/atmopy"
+repository = "https://github.com/michellebieger/atmopy"
 documentation = "https://atmopy.readthedocs.io"
 classifiers = ["Development Status :: 1 - Planning"]
 
 [tool.poetry.urls]
-Changelog = "https://github.com/mfbieger/atmopy/releases"
+Changelog = "https://github.com/michellebieger/atmopy/releases"
 
 [tool.poetry.dependencies]
 python = "^3.8"
